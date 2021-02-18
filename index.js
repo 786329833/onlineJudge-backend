@@ -2,16 +2,14 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
+const basicDBFun = require('./api/basic_db_cmd/basicDB.js');
+const loginApi = require('./api/user_infomation/register.js');
+// import { login } from 'user_infomation/login';
 
-// post的头设置为json格式,不加以下两行则body为空
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.listen(3456, () => console.log("Example app listening on port 3000!"));
-
-// 请修改连接本地MySQL的user与password！！！！确保服务端正确运行
-// 请修改连接本地MySQL的user与password！！！！确保服务端正确运行
-// 请修改连接本地MySQL的user与password！！！！确保服务端正确运行
+app.listen(3456, () => console.log("Example app listening on port 3456!"));
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -25,6 +23,7 @@ db.connect((err) => {
   console.log("connect success");
 });
 
+// 测试
 // 创建数据库todos
 app.get("/createdb", function (req, res) {
   const createDatabaseSql = "CREATE DATABASE IF NOT EXISTS todos";
@@ -37,15 +36,9 @@ app.get("/createdb", function (req, res) {
 });
 
 // 选择数据库todos
-app.get("/choosedb", function (req, res) {
-  const chooseDatabaseSql = "use todos";
-  db.query(chooseDatabaseSql, (err, result) => {
-    if (err) {
-    } else {
-      res.send("choose db success");
-    }
-  });
-});
+app.get("/choosedb", basicDBFun.chooseDB);
+
+app.post("/register", loginApi.register);
 
 // 建立todos_table表
 app.get("/createTable", function (req, res) {
